@@ -1,14 +1,8 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
-    long inscricao;      // Colunas 1-8
-    float nota;          // Colunas 10-14
-    char estado[3];      // Colunas 16-17
-    char cidade[51];     // Colunas 19-68
-    char curso[31];      // Colunas 70-99
-} Aluno;
+#include "structs.h"
 
 // Função para ler um aluno do arquivo TXT (formato fixo)
 int lerAlunoTexto(FILE *txt, Aluno *aluno) {
@@ -186,8 +180,8 @@ int main(int argc, char *argv[]) {
     // Verificar arquivo criado (mostrar primeiros 5 registros)
     verificarArquivoBinario(arquivoSaida, 5);
     
-    printf("✓ Conversão bem-sucedida!\n");
+    printf(" Conversão bem-sucedida!\n");
     printf("  Use o arquivo '%s' para os testes de ordenação.\n\n", arquivoSaida);
     
     return 0;
-}
+}*/
