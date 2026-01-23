@@ -38,6 +38,13 @@ typedef struct {
     int NumOcupadas;
 } TipoArea;
 
+// estrutura do heap minimo com marcacao
+typedef struct{
+    Aluno *alunos;   // vetor de registros em memoria
+    int tamanho;     // quantidade atual de elementos no heap
+    int capacidade;  // capacidade maxima do heap (memoria)
+    int *marcados;   // vetor para marcar elementos do proximo bloco
+} Heap;
 
 extern Metricas metricas;
 
@@ -88,5 +95,21 @@ void QuicksortExterno(FILE *Arq, int Esq, int Dir);
 void metodo1(char *arquivo, int quantidade, int situacao, int imprimir);
 void metodo2(char *arquivo, int quantidade, int situacao, int imprimir);
 void metodo3(char *arquivo, int quantidade, int situacao, int imprimir);
+
+
+// selecao por substituicao 
+
+// funcoes do heap
+Heap* criarHeap(int capacidade);
+void destruirHeap(Heap *h);
+void trocar(Heap *h, int i, int j);
+void heapParaBaixo(Heap *h, int i);
+void heapParaCima(Heap *h, int i);
+void inserirHeap(Heap *h, Aluno aluno, int marcado);
+Aluno removerMinHeap(Heap *h, int *marcado);
+void substituirMinHeap(Heap *h, Aluno novoAluno, int marcado);
+
+// selecao por substituicao
+int selecaoPorSubstituicao(char *arquivoEntrada, char *prefixoFitas, int M);
 
 #endif 
