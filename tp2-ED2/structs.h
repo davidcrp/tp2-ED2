@@ -1,7 +1,3 @@
-/*
- * structs.h - Definições de Estruturas e Constantes
- * Trabalho Prático 02 - Ordenação Externa
- */
 
 #ifndef STRUCTS_H
 #define STRUCTS_H
@@ -11,17 +7,9 @@
 #include <string.h>
 #include <time.h>
 
-// ============================================================================
-// CONSTANTES
-// ============================================================================
+#define TAMAREA 10  // tamanho area para quicksort
 
-#define TAMAREA 10  // Tamanho da área de memória interna para Quicksort
 
-// ============================================================================
-// ESTRUTURAS DE DADOS
-// ============================================================================
-
-// Estrutura de um aluno
 typedef struct {
     long inscricao;
     float nota;
@@ -30,7 +18,7 @@ typedef struct {
     char curso[31];
 } Aluno;
 
-// Estrutura para métricas de desempenho
+
 typedef struct {
     long leituras;
     long escritas;
@@ -38,27 +26,22 @@ typedef struct {
     double tempo;
 } Metricas;
 
-// Estrutura para registro usado no Quicksort Externo
+// registro quick sort  externo
 typedef struct {
     float Chave;
     Aluno Aluno;
 } TipoRegistro;
 
-// Estrutura para área de memória do Quicksort Externo
+// area de memoria quicksort externo
 typedef struct {
     TipoRegistro Registros[TAMAREA];
     int NumOcupadas;
 } TipoArea;
 
-// ============================================================================
-// VARIÁVEL GLOBAL
-// ============================================================================
 
 extern Metricas metricas;
 
-// ============================================================================
-// DECLARAÇÃO DE FUNÇÕES (auxiliar.c)
-// ============================================================================
+// declaracao de funcoes auxiliares que estao implementadas no auxiliar.c
 
 void inicializarMetricas();
 void imprimirMetricas();
@@ -83,9 +66,7 @@ void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, char *
 void imprimirPrimeirosRegistros(char *arquivo, int n);
 void verificarOrdenacao(char *arquivo, int quantidade);
 
-// ============================================================================
-// DECLARAÇÃO DE FUNÇÕES (quicksort.c)
-// ============================================================================
+// declaracao das funcoes do quicksort externo
 
 void FAVazia(TipoArea *Area);
 void InserirArea(TipoArea *Area, TipoRegistro *R, int *NRArea);
@@ -102,12 +83,10 @@ void EscreveMin(FILE *Arq, TipoRegistro R, int *Ei);
 void Particao(FILE *Arq, TipoArea *Area, int Esq, int Dir, int *i, int *j);
 void QuicksortExterno(FILE *Arq, int Esq, int Dir);
 
-// ============================================================================
-// DECLARAÇÃO DE FUNÇÕES (métodos.c)
-// ============================================================================
+// declaracao das funcoes dos metodos, que a main chama
 
 void metodo1(char *arquivo, int quantidade, int situacao, int imprimir);
 void metodo2(char *arquivo, int quantidade, int situacao, int imprimir);
 void metodo3(char *arquivo, int quantidade, int situacao, int imprimir);
 
-#endif // STRUCTS_H
+#endif 

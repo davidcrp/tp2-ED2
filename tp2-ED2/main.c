@@ -4,6 +4,8 @@
  * UFOP - 2025/2
  */
 
+
+ /*
 #include "structs.h"
 
 void imprimirUso() {
@@ -102,7 +104,7 @@ int main(int argc, char *argv[]) {
             metodo2(arquivoEntrada, quantidade, situacao, imprimir);
             break;
         case 3:
-            metodo3(arquivoEntrada, quantidade, situacao, imprimir);
+            metodo3(arquivoEntrada, quantidade, imprimir);
             break;
     }
     
@@ -112,3 +114,4 @@ int main(int argc, char *argv[]) {
     
     return 0;
 }
+ */

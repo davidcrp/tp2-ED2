@@ -1,19 +1,9 @@
-/*
- * auxiliar.c - Funções Auxiliares
- * Trabalho Prático 02 - Ordenação Externa
- */
 
 #include "structs.h"
 
-// ============================================================================
-// VARIÁVEL GLOBAL
-// ============================================================================
 
 Metricas metricas;
 
-// ============================================================================
-// FUNÇÕES DE MÉTRICAS
-// ============================================================================
 
 void inicializarMetricas() {
     metricas.leituras = 0;
@@ -31,9 +21,7 @@ void imprimirMetricas() {
     printf("============================================\n\n");
 }
 
-// ============================================================================
-// FUNÇÕES DE COMPARAÇÃO
-// ============================================================================
+// funcoes para comparacao
 
 int compararAlunos(Aluno *a, Aluno *b) {
     metricas.comparacoes++;
@@ -54,9 +42,7 @@ int compararAlunosQsortDesc(const void *a, const void *b) {
     return -compararAlunosQsort(a, b);
 }
 
-// ============================================================================
-// FUNÇÕES DE LEITURA/ESCRITA (TXT)
-// ============================================================================
+// funcoes de leitura TXT
 
 int lerAlunoTexto(FILE *txt, Aluno *aluno) {
     char linha[256];
@@ -80,9 +66,7 @@ int lerAlunoTexto(FILE *txt, Aluno *aluno) {
 }
 
 
-// ============================================================================
-// FUNÇÕES DE LEITURA/ESCRITA (BIN)
-// ============================================================================
+// funcoes de leitura e escrita BIN
 
 int lerAlunoBinario(FILE *bin, Aluno *aluno) {
     if (fread(aluno, sizeof(Aluno), 1, bin) == 1) {
@@ -126,9 +110,7 @@ void imprimirAluno(Aluno *aluno) {
            aluno->cidade, aluno->curso);
 }
 
-// ============================================================================
-// CONVERSÃO TXT -> BIN
-// ============================================================================
+// conversao txt para bin
 
 void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade) {
     FILE *txt = fopen(arquivoTxt, "r");
@@ -144,8 +126,7 @@ void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade) {
         exit(1);
     }
     
-    printf("Convertendo %s -> %s (%d registros)...\n", 
-           arquivoTxt, arquivoBin, quantidade);
+    printf("Convertendo %s -> %s (%d registros)...\n", arquivoTxt, arquivoBin, quantidade);
     
     Aluno aluno;
     int convertidos = 0;
@@ -166,9 +147,7 @@ void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade) {
     fclose(bin);
 }
 
-// ============================================================================
-// PREPARAÇÃO DE ARQUIVOS
-// ============================================================================
+// criacao dos arquivos ordenados asc e desc 
 
 void criarArquivoOrdenadoAsc(char *origem, char *destino, int n) {
     printf("Criando arquivo ordenado ascendentemente...\n");
@@ -240,9 +219,8 @@ void criarArquivoOrdenadoDesc(char *origem, char *destino, int n) {
     printf("Arquivo ordenado descendente criado: %s\n", destino);
 }
 
-void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, 
-                     char *arquivoSaida) {
-    // Converter TXT para BIN se necessário
+void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, char *arquivoSaida) {
+    // Converter TXT para BIN se necessario
     char arquivoBinOriginal[100];
     sprintf(arquivoBinOriginal, "PROVAO_%d.bin", quantidade);
     
@@ -272,9 +250,7 @@ void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao,
     }
 }
 
-// ============================================================================
-// FUNÇÕES DE VISUALIZAÇÃO
-// ============================================================================
+// funcao de print caso solicitado via linha de comando
 
 void imprimirPrimeirosRegistros(char *arquivo, int n) {
     FILE *arq = fopen(arquivo, "rb");
@@ -330,9 +306,9 @@ void verificarOrdenacao(char *arquivo, int quantidade) {
     fclose(arq);
     
     if (erros == 0) {
-        printf("✓ Arquivo ORDENADO CORRETAMENTE!\n");
+        printf(" Arquivo ORDENADO CORRETAMENTE!\n");
     } else {
-        printf("✗ Arquivo com %d ERROS de ordenação!\n", erros);
+        printf("Arquivo com %d ERROS de ordenação!\n", erros);
     }
 }
 
