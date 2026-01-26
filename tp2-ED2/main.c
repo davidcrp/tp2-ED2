@@ -5,7 +5,7 @@
  */
 
 
- /*
+ 
 #include "structs.h"
 
 void imprimirUso() {
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     int metodo = atoi(argv[1]);
     int quantidade = atoi(argv[2]);
     int situacao = atoi(argv[3]);
-    int imprimir = (argc == 5 && strcmp(argv[4], "[-p]") == 0);
+    int imprimir = (argc == 5 && strcmp(argv[4], "[-P]") == 0);
     
     // Validações
     if (metodo < 1 || metodo > 3) {
@@ -114,4 +114,3 @@ int main(int argc, char *argv[]) {
     
     return 0;
 }
- */

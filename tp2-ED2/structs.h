@@ -1,4 +1,3 @@
-
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
@@ -6,9 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <limits.h> 
 
 #define TAMAREA 10  // tamanho area para quicksort
-
+#define MAX_NOME 100 // tamanho maximo para nomes de arquivos (ADICIONADO)
 
 typedef struct {
     long inscricao;
@@ -44,6 +44,7 @@ typedef struct{
     int tamanho;     // quantidade atual de elementos no heap
     int capacidade;  // capacidade maxima do heap (memoria)
     int *marcados;   // vetor para marcar elementos do proximo bloco
+    int *origem;     // vetor para saber de qual arquivo/fita veio o registro (ADICIONADO)
 } Heap;
 
 extern Metricas metricas;
@@ -94,7 +95,7 @@ void QuicksortExterno(FILE *Arq, int Esq, int Dir);
 
 void metodo1(char *arquivo, int quantidade, int situacao, int imprimir);
 void metodo2(char *arquivo, int quantidade, int situacao, int imprimir);
-void metodo3(char *arquivo, int quantidade, int situacao, int imprimir);
+void metodo3(char *arquivo, int quantidade, int imprimir);
 
 
 // selecao por substituicao 
@@ -105,11 +106,13 @@ void destruirHeap(Heap *h);
 void trocar(Heap *h, int i, int j);
 void heapParaBaixo(Heap *h, int i);
 void heapParaCima(Heap *h, int i);
-void inserirHeap(Heap *h, Aluno aluno, int marcado);
-Aluno removerMinHeap(Heap *h, int *marcado);
-void substituirMinHeap(Heap *h, Aluno novoAluno, int marcado);
+// Atualizado: recebe 'origem'
+void inserirHeap(Heap *h, Aluno aluno, int marcado, int origem);
+// Atualizado: retorna 'origem' por referencia
+Aluno removerMinHeap(Heap *h, int *marcado, int *origem);
+void substituirMinHeap(Heap *h, Aluno novoAluno, int marcado, int origem);
 
 // selecao por substituicao
-int selecaoPorSubstituicao(char *arquivoEntrada, char *prefixoFitas, int M);
+int selecaoPorSubstituicao(char *arquivoEntrada, int tamMemoria);
 
-#endif 
+#endif

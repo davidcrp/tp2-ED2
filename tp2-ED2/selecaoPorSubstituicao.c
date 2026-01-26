@@ -1,23 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "structs.h"
-#include "auxiliar.c"
 
 #define MAX_FITAS 20
 
 // estrutura do heap minimo com marcacao
-typedef struct{
-    Aluno *alunos;   // vetor de registros em memoria
-    int tamanho;     // quantidade atual de elementos no heap
-    int capacidade;  // capacidade maxima do heap (memoria)
-    int *marcados;   // vetor para marcar elementos do proximo bloco
-} Heap;
+// (Estrutura movida para structs.h, funcoes aqui)
 
 // cria o heap com capacidade maxima definida
 Heap* criarHeap(int capacidade){
     Heap *h = (Heap*) malloc(sizeof(Heap));
     h->alunos = (Aluno*) malloc(capacidade * sizeof(Aluno));
     h->marcados = (int*) malloc(capacidade * sizeof(int));
+    h->origem = (int*) malloc(capacidade * sizeof(int)); // Adicionado
     h->capacidade = capacidade;
     h->tamanho = 0;
     return h;
@@ -27,6 +22,7 @@ Heap* criarHeap(int capacidade){
 void destruirHeap(Heap *h){
     free(h->alunos);
     free(h->marcados);
+    free(h->origem); // Adicionado
     free(h);
 }
 
@@ -39,6 +35,11 @@ void trocar(Heap *h, int i, int j){
     int tempMarcado = h->marcados[i];
     h->marcados[i] = h->marcados[j];
     h->marcados[j] = tempMarcado;
+
+    // Troca tambem a origem
+    int tempOrigem = h->origem[i];
+    h->origem[i] = h->origem[j];
+    h->origem[j] = tempOrigem;
 }
 
 // ajusta o heap de cima para baixo para manter a propriedade do heap minimo
@@ -89,25 +90,28 @@ void heapParaCima(Heap *h, int i){
 }
 
 // insere um novo elemento no heap respeitando a ordem
-void inserirHeap(Heap *h, Aluno aluno, int marcado){
+void inserirHeap(Heap *h, Aluno aluno, int marcado, int origem){
     if(h->tamanho < h->capacidade){
         h->alunos[h->tamanho] = aluno;
         h->marcados[h->tamanho] = marcado;
+        h->origem[h->tamanho] = origem; // Adicionado
         heapParaCima(h, h->tamanho);
         h->tamanho++;
     }
 }
 
 // remove o menor elemento do heap
-Aluno removerMinHeap(Heap *h, int *marcado){
+Aluno removerMinHeap(Heap *h, int *marcado, int *origem){
     Aluno min = h->alunos[0];
-    *marcado = h->marcados[0];
+    if (marcado) *marcado = h->marcados[0];
+    if (origem) *origem = h->origem[0]; // Adicionado
 
     h->tamanho--;
 
     if(h->tamanho > 0){
         h->alunos[0] = h->alunos[h->tamanho];
         h->marcados[0] = h->marcados[h->tamanho];
+        h->origem[0] = h->origem[h->tamanho]; // Adicionado
         heapParaBaixo(h, 0);
     }
 
@@ -115,14 +119,15 @@ Aluno removerMinHeap(Heap *h, int *marcado){
 }
 
 // substitui o menor elemento do heap por um novo registro
-void substituirMinHeap(Heap *h, Aluno novoAluno, int marcado){
+void substituirMinHeap(Heap *h, Aluno novoAluno, int marcado, int origem){
     h->alunos[0] = novoAluno;
     h->marcados[0] = marcado;
+    h->origem[0] = origem;
     heapParaBaixo(h, 0);
 }
 
 // implementacao da selecao por substituicao
-int selecaoPorSubstituicao(char *arquivoEntrada, char *prefixoFitas, int M){
+int selecaoPorSubstituicao(char *arquivoEntrada, int M){
     FILE *in = fopen(arquivoEntrada, "rb");
     if (!in) {
         printf("erro ao abrir arquivo de entrada\n");
@@ -131,12 +136,11 @@ int selecaoPorSubstituicao(char *arquivoEntrada, char *prefixoFitas, int M){
 
     Heap *heap = criarHeap(M);
     Aluno aluno;
-    int totalFitas = 0;
 
     // carrega os m primeiros registros na memoria
     for(int i = 0; i < M; i++){
         if(lerAlunoBinario(in, &aluno))
-            inserirHeap(heap, aluno, 0);
+            inserirHeap(heap, aluno, 0, -1);
         else
             break;
     }
@@ -147,31 +151,40 @@ int selecaoPorSubstituicao(char *arquivoEntrada, char *prefixoFitas, int M){
         return 0;
     }
 
-    // cria a primeira fita de saida
-    char nomeFita[50];
-    sprintf(nomeFita, "%s%d.bin", prefixoFitas, totalFitas);
-    FILE *out = fopen(nomeFita, "wb");
+    int totalBlocos = 0;
+    // cria o primeiro arquivo de bloco
+    char nomeBloco[MAX_NOME];
+    sprintf(nomeBloco, "passo0_bloco%d.bin", totalBlocos);
+    FILE *out = fopen(nomeBloco, "wb");
 
     // armazena a ultima nota gravada na fita atual
-    float ultimaNota = -1e9;
+    float ultimaNota = -1.0;
 
     // loop principal da selecao por substituicao
     while(heap->tamanho > 0){
 
         int marcado;
-        Aluno min = removerMinHeap(heap, &marcado);
+        Aluno min = removerMinHeap(heap, &marcado, NULL);
 
-        // se o menor estiver marcado, inicia nova fita
+        // se o menor estiver marcado, significa que o bloco acabou
         if(marcado){
             fclose(out);
-            totalFitas++;
-            sprintf(nomeFita, "%s%d.bin", prefixoFitas, totalFitas);
-            out = fopen(nomeFita, "wb");
-            ultimaNota = -100000; // setamos assim pq a primeira comparacao da fita precisa acessar qualquer valor
-
+            totalBlocos++;
+            sprintf(nomeBloco, "passo0_bloco%d.bin", totalBlocos);
+            out = fopen(nomeBloco, "wb");
+            
+            // Reinsere o item atual (agora desmarcado para o novo bloco)
+            inserirHeap(heap, min, 0, -1);
+            
             // desmarca todos os elementos do heap
             for(int i = 0; i < heap->tamanho; i++)
                 heap->marcados[i] = 0;
+            
+            // Reconstrói o heap (necessário pois mudamos as prioridades ao desmarcar)
+            for(int i = heap->tamanho/2; i >= 0; i--)
+                heapParaBaixo(heap, i);
+                
+            continue; // Recomeça o loop com o novo bloco
         }
 
         // grava o menor registro na fita atual
@@ -181,9 +194,9 @@ int selecaoPorSubstituicao(char *arquivoEntrada, char *prefixoFitas, int M){
         // le novo registro do arquivo de entrada
         if(lerAlunoBinario(in, &aluno)){
             if(aluno.nota >= ultimaNota)
-                inserirHeap(heap, aluno, 0); // entra no bloco atual
+                inserirHeap(heap, aluno, 0, -1); // entra no bloco atual
             else
-                inserirHeap(heap, aluno, 1); // vai para o proximo bloco
+                inserirHeap(heap, aluno, 1, -1); // vai para o proximo bloco
         }
     }
 
@@ -191,6 +204,6 @@ int selecaoPorSubstituicao(char *arquivoEntrada, char *prefixoFitas, int M){
     fclose(in);
     destruirHeap(heap);
 
-    // retorna a quantidade total de fitas geradas
-    return totalFitas + 1;
+    // retorna a quantidade total de blocos gerados
+    return totalBlocos + 1;
 }
