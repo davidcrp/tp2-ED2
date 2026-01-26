@@ -26,7 +26,7 @@ void destruirHeap(Heap *h){
     free(h);
 }
 
-// troca dois elementos de posicao dentro do heap
+// troca dois elementos de posicao dentro do heap a
 void trocar(Heap *h, int i, int j){
     Aluno temp = h->alunos[i];
     h->alunos[i] = h->alunos[j];

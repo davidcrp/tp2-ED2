@@ -1,6 +1,6 @@
 /*
  * Trabalho Prático 02 - Ordenação Externa
- * BCC203 - Estrutura de Dados II
+ * BCC203 - Estrutura de Dados II a
  * UFOP - 2025/2
  */
 

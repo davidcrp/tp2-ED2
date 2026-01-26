@@ -41,7 +41,7 @@ int compararAlunosQsortDesc(const void *a, const void *b) {
     return -compararAlunosQsort(a, b);
 }
 
-// funcoes de leitura TXT
+// funcoes de leitura TXT a
 
 int lerAlunoTexto(FILE *txt, Aluno *aluno) {
     char linha[256];

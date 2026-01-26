@@ -5,7 +5,7 @@
 #include "structs.h"
 
 // Funcao auxiliar para realizar uma passada de intercalacao
-// Pega 'grau' blocos da entrada (arquivos separados) e gera 1 bloco de saida
+// Pega 'grau' blocos da entrada (arquivos separados) e gera 1 bloco de saida a
 int realizarPassada(int numBlocosIn, int grau, int passoAtual) {
     int blocosGerados = 0;
     int processados = 0;

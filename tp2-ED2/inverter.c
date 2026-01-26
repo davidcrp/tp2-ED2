@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+// a
 
 void inverterArquivo(const char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "rb+");

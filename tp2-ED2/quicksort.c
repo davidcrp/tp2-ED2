@@ -179,7 +179,7 @@ void Particao(FILE *Arq, TipoArea *Area, int Esq, int Dir, int *i, int *j) {
 }
 
 
-//quick
+//quick a
 void QuicksortExterno(FILE *Arq, int Esq, int Dir) {
     int i, j;
     TipoArea Area;
