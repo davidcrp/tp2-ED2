@@ -219,35 +219,33 @@ void criarArquivoOrdenadoDesc(char *origem, char *destino, int n) {
 }
 
 void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, char *arquivoSaida) {
-    // Converter TXT para BIN se necessario
+    // sempre converte o txt para bin
     char arquivoBinOriginal[100];
     sprintf(arquivoBinOriginal, "PROVAO_%d.bin", quantidade);
-    
-    FILE *teste = fopen(arquivoBinOriginal, "rb");
-    if (!teste) {
-        converterTxtParaBin(arquivoOriginal, arquivoBinOriginal, quantidade);
-    } else {
-        fclose(teste);
-        printf("Usando arquivo binário existente: %s\n", arquivoBinOriginal);
-    }
-    
+
+    converterTxtParaBin(arquivoOriginal, arquivoBinOriginal, quantidade);
+
     switch(situacao) {
         case 1: // Ordenado ascendente
             sprintf(arquivoSaida, "PROVAO_%d_ASC.bin", quantidade);
             criarArquivoOrdenadoAsc(arquivoBinOriginal, arquivoSaida, quantidade);
             break;
+
         case 2: // Ordenado descendente
             sprintf(arquivoSaida, "PROVAO_%d_DESC.bin", quantidade);
             criarArquivoOrdenadoDesc(arquivoBinOriginal, arquivoSaida, quantidade);
             break;
+
         case 3: // Aleatório
             strcpy(arquivoSaida, arquivoBinOriginal);
             break;
+
         default:
             printf("Situação inválida!\n");
             exit(1);
     }
 }
+
 
 // funcao de print caso solicitado via linha de comando
 

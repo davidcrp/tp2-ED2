@@ -154,7 +154,8 @@ int selecaoPorSubstituicao(char *arquivoEntrada, int M){
     int totalBlocos = 0;
     // cria o primeiro arquivo de bloco
     char nomeBloco[MAX_NOME];
-    sprintf(nomeBloco, "passo0_bloco%d.bin", totalBlocos);
+    sprintf(nomeBloco, "blocos/passo0_bloco%d.bin", totalBlocos);
+
     FILE *out = fopen(nomeBloco, "wb");
 
     // armazena a ultima nota gravada na fita atual
@@ -170,7 +171,8 @@ int selecaoPorSubstituicao(char *arquivoEntrada, int M){
         if(marcado){
             fclose(out);
             totalBlocos++;
-            sprintf(nomeBloco, "passo0_bloco%d.bin", totalBlocos);
+            sprintf(nomeBloco, "blocos/passo0_bloco%d.bin", totalBlocos);
+
             out = fopen(nomeBloco, "wb");
             
             // Reinsere o item atual (agora desmarcado para o novo bloco)
