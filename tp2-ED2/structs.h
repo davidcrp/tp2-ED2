@@ -7,8 +7,11 @@
 #include <time.h>
 #include <limits.h> 
 
+
 #define TAMAREA 10  // tamanho area para quicksort
 #define MAX_NOME 100 // tamanho maximo para nomes de arquivos (ADICIONADO)
+
+void exportarParaTxt(char *nomeBinario, char *nomeTexto);
 
 typedef struct {
     long inscricao;

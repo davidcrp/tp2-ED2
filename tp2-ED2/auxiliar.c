@@ -334,3 +334,24 @@ void imprimirPrimeirosAlunos(char *nomeArquivo, int quantidade) {
     fclose(arquivo);
     printf("=========================================\n\n");
 }
+
+void exportarParaTxt(char *nomeBinario, char *nomeTexto) {
+    FILE *bin = fopen(nomeBinario, "rb");
+    FILE *txt = fopen(nomeTexto, "w");
+    
+    if (!bin || !txt) {
+        printf("Erro ao abrir arquivos.\n");
+        return;
+    }
+
+    Aluno a;
+    while (fread(&a, sizeof(Aluno), 1, bin)) {
+        // Formata igual ao PROVAO.TXT original
+        fprintf(txt, "%08ld %05.1f %s %-50s %-30s\n", 
+                a.inscricao, a.nota, a.estado, a.cidade, a.curso);
+    }
+
+    fclose(bin);
+    fclose(txt);
+    printf("Arquivo texto gerado: %s\n", nomeTexto);
+}

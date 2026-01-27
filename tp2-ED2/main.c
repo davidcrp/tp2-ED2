@@ -112,5 +112,11 @@ int main(int argc, char *argv[]) {
     printf("EXECUÇÃO CONCLUÍDA!\n");
     printf("========================================\n\n");
     
+    
+    char nomeSaidaTxt[100];
+    sprintf(nomeSaidaTxt, "RESULTADO_FINAL.TXT");
+    exportarParaTxt(arquivoEntrada, nomeSaidaTxt); // Gera o arquivo TXT aqui
+    printf("Arquivo texto para conferencia gerado: %s\n", nomeSaidaTxt);
+
     return 0;
 }
