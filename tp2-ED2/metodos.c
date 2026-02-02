@@ -1,4 +1,6 @@
 #include "structs.h"
+#define FIM_BLOCO -1.0
+
 
 // metodo 1 - intercalacao balanceada 2f fitas
 void metodo1(char *arquivo, int quantidade, int situacao, int imprimir) {
@@ -12,27 +14,27 @@ void metodo1(char *arquivo, int quantidade, int situacao, int imprimir) {
     inicializarMetricas();
     clock_t inicio = clock();
 
-    int numBlocos = selecaoPorSubstituicao(arquivo, 10);
-    int passo = 0;
+   int numBlocos = selecaoPorSubstituicao(arquivo, 10);
 
+    distribuirBlocosEmFitas(numBlocos);
+
+    int passo = 0;
     while (numBlocos > 1) {
         numBlocos = realizarPassada2F(numBlocos, 10, passo);
         passo++;
     }
 
-    char nomeFinal[MAX_NOME];
-    if (passo == 0)
-        sprintf(nomeFinal, "blocos/passo0_bloco0.bin");
-    else
-        sprintf(nomeFinal, "2f/passo%d_bloco0.bin", passo);
 
     FILE *orig = fopen(arquivo, "wb");
-    FILE *res  = fopen(nomeFinal, "rb");
+    FILE *res  = fopen("blocos/entrada_fita0.bin", "rb");
 
     Aluno a;
     if (orig && res) {
-        while (lerAlunoBinario(res, &a))
+        while (lerAlunoBinario(res, &a)) {
+            if (a.nota == FIM_BLOCO)
+                break;
             escreverAlunoBinario(orig, &a);
+        }
     }
 
     if (orig) fclose(orig);
@@ -46,6 +48,7 @@ void metodo1(char *arquivo, int quantidade, int situacao, int imprimir) {
         imprimirPrimeirosRegistros(arquivo, 10);
     }
 }
+
 
 // metodo 2 - intercalacao balanceada f+1 fitas
 void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
@@ -60,26 +63,25 @@ void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
     clock_t inicio = clock();
 
     int numBlocos = selecaoPorSubstituicao(arquivo, 19);
-    int passo = 0;
 
+    distribuirBlocosEmFitasF1(numBlocos);
+
+    int passo = 0;
     while (numBlocos > 1) {
         numBlocos = realizarPassadaF1(numBlocos, passo);
         passo++;
     }
 
-    char nomeFinal[MAX_NOME];
-    if (passo == 0)
-        sprintf(nomeFinal, "blocos/passo0_bloco0.bin");
-    else
-        sprintf(nomeFinal, "f1/passo%d_bloco0.bin", passo);
-
     FILE *orig = fopen(arquivo, "wb");
-    FILE *res  = fopen(nomeFinal, "rb");
+    FILE *res  = fopen("blocos/entrada_fita0.bin", "rb");
 
     Aluno a;
     if (orig && res) {
-        while (lerAlunoBinario(res, &a))
+        while (lerAlunoBinario(res, &a)) {
+            if (a.nota == FIM_BLOCO)
+                break;
             escreverAlunoBinario(orig, &a);
+        }
     }
 
     if (orig) fclose(orig);
@@ -93,6 +95,7 @@ void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
         imprimirPrimeirosRegistros(arquivo, 10);
     }
 }
+
 
 // metodo 3 - quicksort externo
 void metodo3(char *arquivo, int quantidade, int imprimir) {

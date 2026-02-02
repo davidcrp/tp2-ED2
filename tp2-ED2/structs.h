@@ -133,7 +133,16 @@ int selecaoPorSubstituicao(char *arquivoEntrada, int M);
 // intercalacao 
 
 // funcoes de intercalacao balanceada
+/* 2f - distribuicao inicial dos blocos nas fitas */
+void distribuirBlocosEmFitas(int numBlocos);
+
+/* 2f - realiza uma passada de intercalacao balanceada */
 int realizarPassada2F(int numBlocosIn, int grau, int passoAtual);
+
+/* f+1 - distribuicao inicial dos blocos nas fitas */
+void distribuirBlocosEmFitasF1(int numBlocos);
+
+/* f+1 - realiza uma passada de intercalacao balanceada */
 int realizarPassadaF1(int numBlocosIn, int passoAtual);
 
 

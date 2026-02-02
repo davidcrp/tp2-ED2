@@ -5,7 +5,6 @@
 #define MAX_FITAS 20
 
 // estrutura do heap minimo com marcacao
-// (Estrutura movida para structs.h, funcoes aqui)
 
 // cria o heap com capacidade maxima definida
 Heap* criarHeap(int capacidade){
@@ -22,7 +21,7 @@ Heap* criarHeap(int capacidade){
 void destruirHeap(Heap *h){
     free(h->alunos);
     free(h->marcados);
-    free(h->origem); // Adicionado
+    free(h->origem); 
     free(h);
 }
 
