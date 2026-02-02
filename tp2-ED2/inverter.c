@@ -2,7 +2,7 @@
 #include <stdlib.h>
 // a
 
-void inverterArquivo(const char *nomeArquivo) {
+/*void inverterArquivo(const char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "rb+");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo %s\n", nomeArquivo);
@@ -47,3 +47,4 @@ int main() {
     inverterArquivo("PROVAO_471705.bin");
     return 0;
 }
+*/

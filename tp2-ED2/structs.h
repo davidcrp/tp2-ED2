@@ -129,4 +129,12 @@ void substituirMinHeap(Heap *h, Aluno novoAluno, int marcado, int origem);
 
 int selecaoPorSubstituicao(char *arquivoEntrada, int M);
 
+
+// intercalacao 
+
+// funcoes de intercalacao balanceada
+int realizarPassada2F(int numBlocosIn, int grau, int passoAtual);
+int realizarPassadaF1(int numBlocosIn, int passoAtual);
+
+
 #endif

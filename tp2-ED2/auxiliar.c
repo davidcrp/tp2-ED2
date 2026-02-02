@@ -1,9 +1,11 @@
 #include "structs.h"
 
-
+// estrutura global usada para armazenar as metricas de desempenho
+// essas metricas sao atualizadas ao longo da execucao do programa
 Metricas metricas;
 
-
+// inicializa todas as metricas com zero antes da execucao dos algoritmos
+// garante que valores de execucoes anteriores nao interfiram nos resultados
 void inicializarMetricas() {
     metricas.leituras = 0;
     metricas.escritas = 0;
@@ -11,6 +13,8 @@ void inicializarMetricas() {
     metricas.tempo = 0.0;
 }
 
+// imprime na tela todas as metricas coletadas
+// usada normalmente ao final da execucao para analise de desempenho
 void imprimirMetricas() {
     printf("\n========== MÉTRICAS DE DESEMPENHO ==========\n");
     printf("Transferências de Leitura:  %ld\n", metricas.leituras);
@@ -22,6 +26,9 @@ void imprimirMetricas() {
 
 // funcoes para comparacao
 
+// compara dois alunos usando o campo nota
+// retorna -1 se a < b, 1 se a > b e 0 se forem iguais
+// incrementa a metrica de comparacoes
 int compararAlunos(Aluno *a, Aluno *b) {
     metricas.comparacoes++;
     if (a->nota < b->nota) return -1;
@@ -29,6 +36,8 @@ int compararAlunos(Aluno *a, Aluno *b) {
     return 0;
 }
 
+// funcao de comparacao usada pelo qsort em ordem crescente
+// recebe ponteiros genericos e faz o cast para aluno
 int compararAlunosQsort(const void *a, const void *b) {
     Aluno *a1 = (Aluno*)a;
     Aluno *a2 = (Aluno*)b;
@@ -37,36 +46,46 @@ int compararAlunosQsort(const void *a, const void *b) {
     return 0;
 }
 
+// funcao de comparacao usada pelo qsort em ordem decrescente
+// reaproveita a comparacao crescente invertendo o sinal
 int compararAlunosQsortDesc(const void *a, const void *b) {
     return -compararAlunosQsort(a, b);
 }
 
-// funcoes de leitura TXT a
+// funcoes de leitura TXT
 
+// le um registro de aluno a partir do arquivo texto
+// assume que o txt segue o layout fixo do provao
 int lerAlunoTexto(FILE *txt, Aluno *aluno) {
     char linha[256];
 
+    // tenta ler uma linha inteira do arquivo
+    // se falhar, indica fim de arquivo
     if (!fgets(linha, sizeof(linha), txt))
         return 0;
 
+    // extrai os campos iniciais da linha usando sscanf
+    // inscricao, nota e estado tem tamanhos fixos
     sscanf(linha, "%8ld %5f %2s",
            &aluno->inscricao,
            &aluno->nota,
            aluno->estado);
 
+    // copia o campo cidade a partir da posicao fixa da linha
     strncpy(aluno->cidade, linha + 18, 50);
-
     aluno->cidade[50] = '\0';
 
+    // copia o campo curso a partir da posicao fixa da linha
     strncpy(aluno->curso, linha + 69, 30);
     aluno->curso[30] = '\0';
 
     return 1;
 }
 
-
 // funcoes de leitura e escrita BIN
 
+// le um aluno do arquivo binario de forma sequencial
+// atualiza a metrica de leituras
 int lerAlunoBinario(FILE *bin, Aluno *aluno) {
     if (fread(aluno, sizeof(Aluno), 1, bin) == 1) {
         metricas.leituras++;
@@ -75,11 +94,15 @@ int lerAlunoBinario(FILE *bin, Aluno *aluno) {
     return 0;
 }
 
+// escreve um aluno no arquivo binario de forma sequencial
+// atualiza a metrica de escritas
 void escreverAlunoBinario(FILE *bin, Aluno *aluno) {
     fwrite(aluno, sizeof(Aluno), 1, bin);
     metricas.escritas++;
 }
 
+// le um aluno em uma posicao especifica do arquivo binario
+// usa fseek para acesso direto (random access)
 int lerAlunoNaPosicao(FILE *arquivo, Aluno *aluno, long posicao) {
     fseek(arquivo, posicao * sizeof(Aluno), SEEK_SET);
     
@@ -90,12 +113,16 @@ int lerAlunoNaPosicao(FILE *arquivo, Aluno *aluno, long posicao) {
     return 0;
 }
 
+// escreve um aluno em uma posicao especifica do arquivo binario
+// tambem utiliza acesso direto com fseek
 void escreverAlunoNaPosicao(FILE *arquivo, Aluno *aluno, long posicao) {
     fseek(arquivo, posicao * sizeof(Aluno), SEEK_SET);
     fwrite(aluno, sizeof(Aluno), 1, arquivo);
     metricas.escritas++;
 }
 
+// calcula quantos alunos existem no arquivo binario
+// faz isso dividindo o tamanho total pelo tamanho de um registro
 long obterNumeroAlunos(FILE *arquivo) {
     fseek(arquivo, 0, SEEK_END);
     long tamanho = ftell(arquivo);
@@ -103,6 +130,8 @@ long obterNumeroAlunos(FILE *arquivo) {
     return tamanho / sizeof(Aluno);
 }
 
+// imprime um aluno formatado na tela
+// usada apenas para exibicao e depuracao
 void imprimirAluno(Aluno *aluno) {
     printf("%8ld | %5.2f | %2s | %-30s | %-25s\n",
            aluno->inscricao, aluno->nota, aluno->estado,
@@ -111,6 +140,8 @@ void imprimirAluno(Aluno *aluno) {
 
 // conversao txt para bin
 
+// converte um arquivo texto em binario
+// limita a conversao ao numero de registros informado
 void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade) {
     FILE *txt = fopen(arquivoTxt, "r");
     if (!txt) {
@@ -130,10 +161,12 @@ void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade) {
     Aluno aluno;
     int convertidos = 0;
     
+    // le alunos do txt e grava no bin ate atingir a quantidade desejada
     while (convertidos < quantidade && lerAlunoTexto(txt, &aluno)) {
         fwrite(&aluno, sizeof(Aluno), 1, bin);
         convertidos++;
         
+        // imprime progresso para arquivos grandes
         if (convertidos % 10000 == 0) {
             printf("  Convertidos: %d registros\r", convertidos);
             fflush(stdout);
@@ -148,15 +181,18 @@ void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade) {
 
 // criacao dos arquivos ordenados asc e desc 
 
+// cria um arquivo binario ordenado em ordem crescente de nota
 void criarArquivoOrdenadoAsc(char *origem, char *destino, int n) {
     printf("Criando arquivo ordenado ascendentemente...\n");
     
+    // aloca memoria para carregar todos os alunos
     Aluno *alunos = (Aluno*)malloc(n * sizeof(Aluno));
     if (!alunos) {
         printf("ERRO: Memória insuficiente!\n");
         exit(1);
     }
     
+    // abre o arquivo de origem
     FILE *arq = fopen(origem, "rb");
     if (!arq) {
         printf("ERRO: Não foi possível abrir '%s'\n", origem);
@@ -164,11 +200,14 @@ void criarArquivoOrdenadoAsc(char *origem, char *destino, int n) {
         exit(1);
     }
     
+    // le todos os registros do arquivo para memoria
     fread(alunos, sizeof(Aluno), n, arq);
     fclose(arq);
     
+    // ordena os alunos pela nota usando qsort
     qsort(alunos, n, sizeof(Aluno), compararAlunosQsort);
     
+    // cria o arquivo de destino ordenado
     FILE *ord = fopen(destino, "wb");
     if (!ord) {
         printf("ERRO: Não foi possível criar '%s'\n", destino);
@@ -176,6 +215,7 @@ void criarArquivoOrdenadoAsc(char *origem, char *destino, int n) {
         exit(1);
     }
     
+    // grava os alunos ordenados no arquivo
     fwrite(alunos, sizeof(Aluno), n, ord);
     fclose(ord);
     free(alunos);
@@ -183,6 +223,7 @@ void criarArquivoOrdenadoAsc(char *origem, char *destino, int n) {
     printf("Arquivo ordenado ascendente criado: %s\n", destino);
 }
 
+// cria um arquivo binario ordenado em ordem decrescente de nota
 void criarArquivoOrdenadoDesc(char *origem, char *destino, int n) {
     printf("Criando arquivo ordenado descendentemente...\n");
     
@@ -202,6 +243,7 @@ void criarArquivoOrdenadoDesc(char *origem, char *destino, int n) {
     fread(alunos, sizeof(Aluno), n, arq);
     fclose(arq);
     
+    // ordena os alunos em ordem decrescente
     qsort(alunos, n, sizeof(Aluno), compararAlunosQsortDesc);
     
     FILE *ord = fopen(destino, "wb");
@@ -218,25 +260,27 @@ void criarArquivoOrdenadoDesc(char *origem, char *destino, int n) {
     printf("Arquivo ordenado descendente criado: %s\n", destino);
 }
 
+// prepara o arquivo final conforme a situacao escolhida
+// situacao: 1 ascendente, 2 descendente, 3 aleatorio
 void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, char *arquivoSaida) {
-    // sempre converte o txt para bin
+    // sempre converte o txt original para binario
     char arquivoBinOriginal[100];
     sprintf(arquivoBinOriginal, "PROVAO_%d.bin", quantidade);
 
     converterTxtParaBin(arquivoOriginal, arquivoBinOriginal, quantidade);
 
     switch(situacao) {
-        case 1: // Ordenado ascendente
+        case 1:
             sprintf(arquivoSaida, "PROVAO_%d_ASC.bin", quantidade);
             criarArquivoOrdenadoAsc(arquivoBinOriginal, arquivoSaida, quantidade);
             break;
 
-        case 2: // Ordenado descendente
+        case 2:
             sprintf(arquivoSaida, "PROVAO_%d_DESC.bin", quantidade);
             criarArquivoOrdenadoDesc(arquivoBinOriginal, arquivoSaida, quantidade);
             break;
 
-        case 3: // Aleatório
+        case 3:
             strcpy(arquivoSaida, arquivoBinOriginal);
             break;
 
@@ -246,9 +290,9 @@ void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, char *
     }
 }
 
-
 // funcao de print caso solicitado via linha de comando
 
+// imprime os primeiros registros de um arquivo binario
 void imprimirPrimeirosRegistros(char *arquivo, int n) {
     FILE *arq = fopen(arquivo, "rb");
     if (!arq) {
@@ -272,6 +316,7 @@ void imprimirPrimeirosRegistros(char *arquivo, int n) {
     printf("============================================\n\n");
 }
 
+// verifica se o arquivo esta ordenado corretamente por nota
 void verificarOrdenacao(char *arquivo, int quantidade) {
     FILE *arq = fopen(arquivo, "rb");
     if (!arq) {
@@ -282,11 +327,13 @@ void verificarOrdenacao(char *arquivo, int quantidade) {
     Aluno anterior, atual;
     int erros = 0;
     
+    // le o primeiro aluno como referencia inicial
     if (fread(&anterior, sizeof(Aluno), 1, arq) != 1) {
         fclose(arq);
         return;
     }
     
+    // percorre o arquivo comparando registros consecutivos
     for (int i = 1; i < quantidade; i++) {
         if (fread(&atual, sizeof(Aluno), 1, arq) != 1) break;
         
@@ -309,6 +356,7 @@ void verificarOrdenacao(char *arquivo, int quantidade) {
     }
 }
 
+// imprime os primeiros alunos usando leitura binaria com metricas
 void imprimirPrimeirosAlunos(char *nomeArquivo, int quantidade) {
     FILE *arquivo = fopen(nomeArquivo, "rb");
     if (!arquivo) {
@@ -324,6 +372,7 @@ void imprimirPrimeirosAlunos(char *nomeArquivo, int quantidade) {
     Aluno aluno;
     int lidos = 0;
     
+    // le alunos enquanto houver registros e limite nao for atingido
     while (lidos < quantidade && lerAlunoBinario(arquivo, &aluno)) {
         imprimirAluno(&aluno);
         lidos++;
@@ -333,6 +382,7 @@ void imprimirPrimeirosAlunos(char *nomeArquivo, int quantidade) {
     printf("=========================================\n\n");
 }
 
+// exporta um arquivo binario para texto mantendo o formato original
 void exportarParaTxt(char *nomeBinario, char *nomeTexto) {
     FILE *bin = fopen(nomeBinario, "rb");
     FILE *txt = fopen(nomeTexto, "w");
@@ -343,8 +393,9 @@ void exportarParaTxt(char *nomeBinario, char *nomeTexto) {
     }
 
     Aluno a;
+    // le cada registro do binario e grava no txt
     while (fread(&a, sizeof(Aluno), 1, bin)) {
-        // Formata igual ao PROVAO.TXT original
+        // formata exatamente como o provao.txt original
         fprintf(txt, "%08ld %05.1f %s %-50s %-30s\n", 
                 a.inscricao, a.nota, a.estado, a.cidade, a.curso);
     }

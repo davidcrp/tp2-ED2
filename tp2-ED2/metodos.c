@@ -1,136 +1,6 @@
-/*
- * metodos.c - Implementação dos 3 Métodos de Ordenação Externa
- */
-
 #include "structs.h"
 
-// ============================================================================
-// PASSADA MÉTODO 1 - 2f FITAS  → grava em pasta 2f/
-// ============================================================================
-
-int realizarPassada(int numBlocosIn, int grau, int passoAtual) {
-    int blocosGerados = 0;
-    int processados = 0;
-
-    while (processados < numBlocosIn) {
-
-        int qtdInput = grau;
-        if (numBlocosIn - processados < grau)
-            qtdInput = numBlocosIn - processados;
-
-        FILE **entradas = (FILE**) malloc(qtdInput * sizeof(FILE*));
-        char nomeIn[MAX_NOME];
-
-        for (int i = 0; i < qtdInput; i++) {
-            if (passoAtual == 0)
-                sprintf(nomeIn, "blocos/passo0_bloco%d.bin", processados + i);
-            else
-                sprintf(nomeIn, "2f/passo%d_bloco%d.bin", passoAtual, processados + i);
-
-            entradas[i] = fopen(nomeIn, "rb");
-        }
-
-        char nomeOut[MAX_NOME];
-        sprintf(nomeOut, "2f/passo%d_bloco%d.bin", passoAtual + 1, blocosGerados);
-        FILE *saida = fopen(nomeOut, "wb");
-
-        Heap *heap = criarHeap(qtdInput);
-        Aluno reg;
-
-        for (int i = 0; i < qtdInput; i++) {
-            if (entradas[i] && lerAlunoBinario(entradas[i], &reg)) {
-                inserirHeap(heap, reg, 0, i);
-            }
-        }
-
-        while (heap->tamanho > 0) {
-            int origem;
-            Aluno menor = removerMinHeap(heap, NULL, &origem);
-            escreverAlunoBinario(saida, &menor);
-
-            if (lerAlunoBinario(entradas[origem], &reg))
-                inserirHeap(heap, reg, 0, origem);
-        }
-
-        destruirHeap(heap);
-        fclose(saida);
-        for (int i = 0; i < qtdInput; i++)
-            if (entradas[i]) fclose(entradas[i]);
-
-        free(entradas);
-
-        processados += qtdInput;
-        blocosGerados++;
-    }
-
-    return blocosGerados;
-}
-
-// ============================================================================
-// PASSADA MÉTODO 2 - f+1 FITAS → grava em pasta 2f1/
-// ============================================================================
-
-int realizarPassadaF1(int numBlocosIn, int passoAtual) {
-    int blocosGerados = 0;
-    int processados = 0;
-
-    while (processados < numBlocosIn) {
-
-        int qtdInput = 19;
-        if (numBlocosIn - processados < 19)
-            qtdInput = numBlocosIn - processados;
-
-        FILE **entradas = (FILE**) malloc(qtdInput * sizeof(FILE*));
-        char nomeIn[MAX_NOME];
-
-        for (int i = 0; i < qtdInput; i++) {
-            if (passoAtual == 0)
-                sprintf(nomeIn, "blocos/passo0_bloco%d.bin", processados + i);
-            else
-                sprintf(nomeIn, "f1/passo%d_bloco%d.bin", passoAtual, processados + i);
-
-            entradas[i] = fopen(nomeIn, "rb");
-        }
-
-        char nomeOut[MAX_NOME];
-        sprintf(nomeOut, "f1/passo%d_bloco%d.bin", passoAtual + 1, blocosGerados);
-        FILE *saida = fopen(nomeOut, "wb");
-
-        Heap *heap = criarHeap(qtdInput);
-        Aluno reg;
-
-        for (int i = 0; i < qtdInput; i++) {
-            if (entradas[i] && lerAlunoBinario(entradas[i], &reg))
-                inserirHeap(heap, reg, 0, i);
-        }
-
-        while (heap->tamanho > 0) {
-            int origem;
-            Aluno menor = removerMinHeap(heap, NULL, &origem);
-            escreverAlunoBinario(saida, &menor);
-
-            if (lerAlunoBinario(entradas[origem], &reg))
-                inserirHeap(heap, reg, 0, origem);
-        }
-
-        destruirHeap(heap);
-        fclose(saida);
-        for (int i = 0; i < qtdInput; i++)
-            if (entradas[i]) fclose(entradas[i]);
-
-        free(entradas);
-
-        processados += qtdInput;
-        blocosGerados++;
-    }
-
-    return blocosGerados;
-}
-
-// ============================================================================
-// MÉTODO 1 - INTERCALAÇÃO BALANCEADA 2f FITAS
-// ============================================================================
-
+// metodo 1 - intercalacao balanceada 2f fitas
 void metodo1(char *arquivo, int quantidade, int situacao, int imprimir) {
     printf("\n=== metodo 1: intercalacao balanceada 2f fitas ===\n");
 
@@ -145,17 +15,12 @@ void metodo1(char *arquivo, int quantidade, int situacao, int imprimir) {
     int numBlocos = selecaoPorSubstituicao(arquivo, 10);
     int passo = 0;
 
-    printf("\nselecao por substituicao concluida\n");
-    printf("total de blocos gerados: %d\n", numBlocos);
-
     while (numBlocos > 1) {
-        numBlocos = realizarPassada(numBlocos, 10, passo);
+        numBlocos = realizarPassada2F(numBlocos, 10, passo);
         passo++;
-        printf("Passada %d concluida. Blocos restantes: %d\n", passo, numBlocos);
     }
 
     char nomeFinal[MAX_NOME];
-
     if (passo == 0)
         sprintf(nomeFinal, "blocos/passo0_bloco0.bin");
     else
@@ -173,9 +38,7 @@ void metodo1(char *arquivo, int quantidade, int situacao, int imprimir) {
     if (orig) fclose(orig);
     if (res) fclose(res);
 
-    clock_t fim = clock();
-    metricas.tempo = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
-
+    metricas.tempo = ((double)(clock() - inicio)) / CLOCKS_PER_SEC;
     imprimirMetricas();
 
     if (imprimir) {
@@ -184,12 +47,9 @@ void metodo1(char *arquivo, int quantidade, int situacao, int imprimir) {
     }
 }
 
-// ============================================================================
-// MÉTODO 2 - INTERCALAÇÃO BALANCEADA f+1 FITAS
-// ============================================================================
-
+// metodo 2 - intercalacao balanceada f+1 fitas
 void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
-    printf("\n=== Metodo 2: Intercalacao Balanceada f+1 Fitas ===\n");
+    printf("\n=== metodo 2: intercalacao balanceada f+1 fitas ===\n");
 
     if (imprimir) {
         printf("antes da ordenacao:\n");
@@ -202,22 +62,16 @@ void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
     int numBlocos = selecaoPorSubstituicao(arquivo, 19);
     int passo = 0;
 
-    printf("\nselecao por substituicao concluida\n");
-    printf("total de blocos gerados: %d\n", numBlocos);
-
     while (numBlocos > 1) {
         numBlocos = realizarPassadaF1(numBlocos, passo);
         passo++;
-        printf("Passada %d concluida. Blocos restantes: %d\n", passo, numBlocos);
     }
 
     char nomeFinal[MAX_NOME];
-
     if (passo == 0)
         sprintf(nomeFinal, "blocos/passo0_bloco0.bin");
     else
         sprintf(nomeFinal, "f1/passo%d_bloco0.bin", passo);
-
 
     FILE *orig = fopen(arquivo, "wb");
     FILE *res  = fopen(nomeFinal, "rb");
@@ -231,9 +85,7 @@ void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
     if (orig) fclose(orig);
     if (res) fclose(res);
 
-    clock_t fim = clock();
-    metricas.tempo = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
-
+    metricas.tempo = ((double)(clock() - inicio)) / CLOCKS_PER_SEC;
     imprimirMetricas();
 
     if (imprimir) {
@@ -242,43 +94,34 @@ void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
     }
 }
 
-
-// ============================================================================
-// MÉTODO 3: QUICKSORT EXTERNO
-// ============================================================================
-
+// metodo 3 - quicksort externo
 void metodo3(char *arquivo, int quantidade, int imprimir) {
-    printf("\n=== MÉTODO 3: Quicksort Externo ===\n");
-    printf("Memória: 10 registros | Algoritmo: Monard (1980)\n\n");
-    
+    printf("\n=== metodo 3: quicksort externo ===\n");
+
     if (imprimir) {
-        printf("ANTES DA ORDENAÇÃO:\n");
+        printf("antes da ordenacao:\n");
         imprimirPrimeirosRegistros(arquivo, 10);
     }
-    
+
     inicializarMetricas();
-    
+
     FILE *arq = fopen(arquivo, "r+b");
     if (!arq) {
-        printf("ERRO: Não foi possível abrir '%s'\n", arquivo);
+        printf("erro ao abrir arquivo\n");
         return;
     }
-    
+
     clock_t inicio = clock();
     QuicksortExterno(arq, 1, quantidade);
-    clock_t fim = clock();
-    
     fclose(arq);
-    
-    metricas.tempo = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
-    
+
+    metricas.tempo = ((double)(clock() - inicio)) / CLOCKS_PER_SEC;
     imprimirMetricas();
-    
+
     if (imprimir) {
-        printf("DEPOIS DA ORDENAÇÃO:\n");
+        printf("depois da ordenacao:\n");
         imprimirPrimeirosRegistros(arquivo, 10);
     }
-    
-    printf("\nVerificando ordenação...\n");
+
     verificarOrdenacao(arquivo, quantidade);
 }

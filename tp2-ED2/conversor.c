@@ -4,7 +4,7 @@
 
 #include "structs.h"
 
-// Função para ler um aluno do arquivo TXT (formato fixo)
+// Função para ler um aluno do arquivo TXT 
 int lerAlunoTexto(FILE *txt, Aluno *aluno) {
     char linha[256];
     
