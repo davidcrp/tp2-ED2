@@ -73,7 +73,7 @@ void metodo2(char *arquivo, int quantidade, int situacao, int imprimir) {
     }
 
     FILE *orig = fopen(arquivo, "wb");
-    FILE *res  = fopen("blocos/entrada_fita0.bin", "rb");
+    FILE *res  = fopen("blocos/saida_fita.bin", "rb");
 
     Aluno a;
     if (orig && res) {

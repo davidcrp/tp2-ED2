@@ -122,7 +122,11 @@ int realizarPassadaF1(int numBlocosIn, int passoAtual) {
     for (int i = 0; i < F; i++)
         fclose(novaEntrada[i]);
 
-    remove("blocos/saida_fita.bin");
+    if (blocosGerados > 1) 
+        remove("blocos/saida_fita.bin"); // teste commit
+
+
+
 
     return blocosGerados;
 }
