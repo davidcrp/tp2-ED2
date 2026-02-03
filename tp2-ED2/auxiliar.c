@@ -1,11 +1,9 @@
 #include "structs.h"
 
-// estrutura global usada para armazenar as metricas de desempenho
-// essas metricas sao atualizadas ao longo da execucao do programa
+//estrutura metricas
 Metricas metricas;
 
-// inicializa todas as metricas com zero antes da execucao dos algoritmos
-// garante que valores de execucoes anteriores nao interfiram nos resultados
+//inicializacao das metricas
 void inicializarMetricas() {
     metricas.leituras = 0;
     metricas.escritas = 0;
@@ -13,8 +11,7 @@ void inicializarMetricas() {
     metricas.tempo = 0.0;
 }
 
-// imprime na tela todas as metricas coletadas
-// usada normalmente ao final da execucao para analise de desempenho
+//mostra o relatorio final de desempenho 
 void imprimirMetricas() {
     printf("\n========== MÉTRICAS DE DESEMPENHO ==========\n");
     printf("Transferências de Leitura:  %ld\n", metricas.leituras);
@@ -24,11 +21,10 @@ void imprimirMetricas() {
     printf("============================================\n\n");
 }
 
-// funcoes para comparacao
+//FUNCOES PARA COMPARACAO
 
-// compara dois alunos usando o campo nota
-// retorna -1 se a < b, 1 se a > b e 0 se forem iguais
-// incrementa a metrica de comparacoes
+//compara dois alunos usando o campo nota
+//retorna -1 se a < b, 1 se a > b e 0 se forem iguais
 int compararAlunos(Aluno *a, Aluno *b) {
     metricas.comparacoes++;
     if (a->nota < b->nota) return -1;
@@ -52,10 +48,8 @@ int compararAlunosQsortDesc(const void *a, const void *b) {
     return -compararAlunosQsort(a, b);
 }
 
-// funcoes de leitura TXT
 
-// le um registro de aluno a partir do arquivo texto
-// assume que o txt segue o layout fixo do provao
+// le um registro de aluno a partir do arquivo texto provao
 int lerAlunoTexto(FILE *txt, Aluno *aluno) {
     char linha[256];
 
@@ -82,7 +76,7 @@ int lerAlunoTexto(FILE *txt, Aluno *aluno) {
     return 1;
 }
 
-// funcoes de leitura e escrita BIN
+// FUNCOES LEITURAS E ESCRITAS BIN
 
 // le um aluno do arquivo binario de forma sequencial
 // atualiza a metrica de leituras
@@ -102,7 +96,7 @@ void escreverAlunoBinario(FILE *bin, Aluno *aluno) {
 }
 
 // le um aluno em uma posicao especifica do arquivo binario
-// usa fseek para acesso direto (random access)
+// usa fseek para acesso direto (acesso aleatorio)
 int lerAlunoNaPosicao(FILE *arquivo, Aluno *aluno, long posicao) {
     fseek(arquivo, posicao * sizeof(Aluno), SEEK_SET);
     
@@ -138,7 +132,7 @@ void imprimirAluno(Aluno *aluno) {
            aluno->cidade, aluno->curso);
 }
 
-// conversao txt para bin
+// CONVERSAO TXT PARA BIN
 
 // converte um arquivo texto em binario
 // limita a conversao ao numero de registros informado
@@ -173,13 +167,13 @@ void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade) {
         }
     }
     
-    printf("\n✓ Conversão concluída! %d registros convertidos.\n", convertidos);
+    printf("\n Conversao concluida! %d registros convertidos.\n", convertidos);
     
     fclose(txt);
     fclose(bin);
 }
 
-// criacao dos arquivos ordenados asc e desc 
+// CRIACAO ORDENADA DOS ARQUIVOS ASC E DESC
 
 // cria um arquivo binario ordenado em ordem crescente de nota
 void criarArquivoOrdenadoAsc(char *origem, char *destino, int n) {
@@ -290,7 +284,7 @@ void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, char *
     }
 }
 
-// funcao de print caso solicitado via linha de comando
+// FUNCAO DE PRINT
 
 // imprime os primeiros registros de um arquivo binario
 void imprimirPrimeirosRegistros(char *arquivo, int n) {
@@ -382,7 +376,7 @@ void imprimirPrimeirosAlunos(char *nomeArquivo, int quantidade) {
     printf("=========================================\n\n");
 }
 
-// exporta um arquivo binario para texto mantendo o formato original
+// exporta um arquivo binario para texto
 void exportarParaTxt(char *nomeBinario, char *nomeTexto) {
     FILE *bin = fopen(nomeBinario, "rb");
     FILE *txt = fopen(nomeTexto, "w");
@@ -395,7 +389,7 @@ void exportarParaTxt(char *nomeBinario, char *nomeTexto) {
     Aluno a;
     // le cada registro do binario e grava no txt
     while (fread(&a, sizeof(Aluno), 1, bin)) {
-        // formata exatamente como o provao.txt original
+        // mantem o formato original
         fprintf(txt, "%08ld %05.1f %s %-50s %-30s\n", 
                 a.inscricao, a.nota, a.estado, a.cidade, a.curso);
     }

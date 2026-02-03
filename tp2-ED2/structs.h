@@ -12,9 +12,7 @@
 
 void exportarParaTxt(char *nomeBinario, char *nomeTexto);
 
-// =====================
-// ESTRUTURAS PRINCIPAIS
-// =====================
+// Estruturas principais
 
 typedef struct {
     long inscricao;
@@ -54,13 +52,12 @@ typedef struct{
 
 extern Metricas metricas;
 
-// =================
-// FUNCOES AUXILIARES
-// =================
+// Funcoes auxiliares
 
 void inicializarMetricas();
 void imprimirMetricas();
 
+// Pre processamento geral
 int compararAlunos(Aluno *a, Aluno *b);
 int compararAlunosQsort(const void *a, const void *b);
 int compararAlunosQsortDesc(const void *a, const void *b);
@@ -77,18 +74,17 @@ long obterNumeroAlunos(FILE *arquivo);
 void imprimirAluno(Aluno *aluno);
 void imprimirPrimeirosAlunos(char *nomeArquivo, int quantidade);
 
+// Funcoes de preparacoes: melhor, pior e caso medio
 void converterTxtParaBin(char *arquivoTxt, char *arquivoBin, int quantidade);
 void criarArquivoOrdenadoAsc(char *origem, char *destino, int n);
 void criarArquivoOrdenadoDesc(char *origem, char *destino, int n);
-
 void prepararArquivo(char *arquivoOriginal, int quantidade, int situacao, char *arquivoSaida);
+
 
 void imprimirPrimeirosRegistros(char *arquivo, int n);
 void verificarOrdenacao(char *arquivo, int quantidade);
 
-// =====================
-// QUICKSORT EXTERNO
-// =====================
+// Quicksort Externo
 
 void FAVazia(TipoArea *Area);
 void InserirArea(TipoArea *Area, TipoRegistro *R, int *NRArea);
@@ -105,17 +101,13 @@ void EscreveMin(FILE *Arq, TipoRegistro R, int *Ei);
 void Particao(FILE *Arq, TipoArea *Area, int Esq, int Dir, int *i, int *j);
 void QuicksortExterno(FILE *Arq, int Esq, int Dir);
 
-// =================
-// METODOS DE ORDENACAO
-// =================
+// Metodos de Ordenacao, chamdas pela main
 
 void metodo1(char *arquivo, int quantidade, int situacao, int imprimir);
 void metodo2(char *arquivo, int quantidade, int situacao, int imprimir);
 void metodo3(char *arquivo, int quantidade, int imprimir);
 
-// ===========================
-// HEAP + SELECAO POR SUBSTITUICAO
-// ===========================
+// Heap + Selecao por Substituicao
 
 Heap* criarHeap(int capacidade);
 void destruirHeap(Heap *h);
@@ -130,19 +122,18 @@ void substituirMinHeap(Heap *h, Aluno novoAluno, int marcado, int origem);
 int selecaoPorSubstituicao(char *arquivoEntrada, int M);
 
 
-// intercalacao 
+// Intercalacao Balanceada
 
-// funcoes de intercalacao balanceada
-/* 2f - distribuicao inicial dos blocos nas fitas */
+// 2f - distribuicao inicial dos blocos nas fitas 
 void distribuirBlocosEmFitas(int numBlocos);
 
-/* 2f - realiza uma passada de intercalacao balanceada */
+// 2f - realiza uma passada de intercalacao balanceada 
 int realizarPassada2F(int numBlocosIn, int grau, int passoAtual);
 
-/* f+1 - distribuicao inicial dos blocos nas fitas */
+// f+1 - distribuicao inicial dos blocos nas fitas 
 void distribuirBlocosEmFitasF1(int numBlocos);
 
-/* f+1 - realiza uma passada de intercalacao balanceada */
+// f+1 - realiza uma passada de intercalacao balanceada 
 int realizarPassadaF1(int numBlocosIn, int passoAtual);
 
 

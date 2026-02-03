@@ -1,14 +1,7 @@
-/*
- * Trabalho Prático 02 - Ordenação Externa
- * BCC203 - Estrutura de Dados II a
- * UFOP - 2025/2
- */
 
-// inclui as estruturas, tipos e prototipos usados em todo o trabalho
 #include "structs.h"
 
 // imprime na tela as instrucoes de uso do programa
-// chamada quando o usuario fornece parametros invalidos ou insuficientes
 void imprimirUso() {
     printf("\n========================================\n");
     printf("TRABALHO PRÁTICO 02 - ORDENAÇÃO EXTERNA\n");
@@ -33,8 +26,7 @@ void imprimirUso() {
     printf("========================================\n\n");
 }
 
-// funcao principal do programa
-// responsavel por validar parametros, preparar arquivos e chamar o metodo escolhido
+// validar parametros, preparar arquivos e chamar o metodo escolhido
 int main(int argc, char *argv[]) {
 
     // verifica se o numero minimo de argumentos foi fornecido
@@ -43,28 +35,24 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    // leitura dos argumentos da linha de comando
-    // metodo define qual algoritmo sera usado
-    // quantidade define o numero de alunos
-    // situacao define a ordem inicial do arquivo
+    // leitura dos argumentos e pega o metodo, quantidade e situacao
     int metodo = atoi(argv[1]);
     int quantidade = atoi(argv[2]);
     int situacao = atoi(argv[3]);
 
     // verifica se a opcao -P foi passada
-    // nesse caso, o programa imprime dados antes e depois da ordenacao
     int imprimir = (argc == 5 && strcmp(argv[4], "[-P]") == 0);
     
-    // validacao do metodo escolhido
+    // validacao do metodo 
     if (metodo < 1 || metodo > 3) {
-        printf("ERRO: Método inválido! Use 1, 2 ou 3.\n");
+        printf("ERRO: metodo invalido! Use 1, 2 ou 3.\n");
         imprimirUso();
         return 1;
     }
     
     // validacao da quantidade de alunos
     if (quantidade <= 0) {
-        printf("ERRO: Quantidade inválida! Deve ser um número positivo.\n");
+        printf("ERRO: quantidade invalida! Deve ser um numero positivo.\n");
         imprimirUso();
         return 1;
     }
@@ -76,12 +64,10 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    // impressao do cabecalho do trabalho
     printf("\n========================================\n");
     printf("TRABALHO PRÁTICO 02 - ORDENAÇÃO EXTERNA\n");
     printf("========================================\n\n");
     
-    // exibicao da configuracao escolhida pelo usuario
     printf("Configuração:\n");
     printf("  Método:     %d - ", metodo);
 
@@ -92,7 +78,6 @@ int main(int argc, char *argv[]) {
         case 3: printf("Quicksort Externo\n"); break;
     }
     
-    // mostra a quantidade de alunos
     printf("  Quantidade: %d alunos\n", quantidade);
 
     // identifica a situacao inicial do arquivo
@@ -108,7 +93,7 @@ int main(int argc, char *argv[]) {
     printf("\n========================================\n\n");
     
     // prepara o arquivo de entrada a partir do PROVAO.TXT
-    // converte para binario e ajusta conforme a situacao escolhida
+    // converte para binario e modifica seguindo oque doi pedido
     char arquivoEntrada[100];
     printf("Preparando arquivo de entrada...\n");
     prepararArquivo("PROVAO.TXT", quantidade, situacao, arquivoEntrada);
@@ -116,18 +101,19 @@ int main(int argc, char *argv[]) {
     
     // executa o metodo de ordenacao selecionado
     switch(metodo) {
+
+        // intercalação balanceada com 2f fitas
         case 1:
-            // intercalação balanceada com 2f fitas
             metodo1(arquivoEntrada, quantidade, situacao, imprimir);
             break;
-
-        case 2:
-            // intercalação balanceada com f+1 fitas
+        
+        // intercalação balanceada com f+1 fitas
+        case 2:    
             metodo2(arquivoEntrada, quantidade, situacao, imprimir);
             break;
 
+        // quicksort externo
         case 3:
-            // quicksort externo
             metodo3(arquivoEntrada, quantidade, imprimir);
             break;
     }

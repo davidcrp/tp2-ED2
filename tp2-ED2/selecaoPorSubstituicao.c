@@ -25,7 +25,7 @@ void destruirHeap(Heap *h){
     free(h);
 }
 
-// troca dois elementos de posicao dentro do heap a
+// troca dois elementos de posicao dentro do heap
 void trocar(Heap *h, int i, int j){
     Aluno temp = h->alunos[i];
     h->alunos[i] = h->alunos[j];
@@ -93,7 +93,7 @@ void inserirHeap(Heap *h, Aluno aluno, int marcado, int origem){
     if(h->tamanho < h->capacidade){
         h->alunos[h->tamanho] = aluno;
         h->marcados[h->tamanho] = marcado;
-        h->origem[h->tamanho] = origem; // Adicionado
+        h->origem[h->tamanho] = origem; 
         heapParaCima(h, h->tamanho);
         h->tamanho++;
     }
@@ -103,14 +103,14 @@ void inserirHeap(Heap *h, Aluno aluno, int marcado, int origem){
 Aluno removerMinHeap(Heap *h, int *marcado, int *origem){
     Aluno min = h->alunos[0];
     if (marcado) *marcado = h->marcados[0];
-    if (origem) *origem = h->origem[0]; // Adicionado
+    if (origem) *origem = h->origem[0]; 
 
     h->tamanho--;
 
     if(h->tamanho > 0){
         h->alunos[0] = h->alunos[h->tamanho];
         h->marcados[0] = h->marcados[h->tamanho];
-        h->origem[0] = h->origem[h->tamanho]; // Adicionado
+        h->origem[0] = h->origem[h->tamanho]; 
         heapParaBaixo(h, 0);
     }
 
@@ -174,14 +174,14 @@ int selecaoPorSubstituicao(char *arquivoEntrada, int M){
 
             out = fopen(nomeBloco, "wb");
             
-            // Reinsere o item atual (agora desmarcado para o novo bloco)
+            // Reinsere o item atual, desmascado para a atual
             inserirHeap(heap, min, 0, -1);
             
             // desmarca todos os elementos do heap
             for(int i = 0; i < heap->tamanho; i++)
                 heap->marcados[i] = 0;
             
-            // Reconstrói o heap (necessário pois mudamos as prioridades ao desmarcar)
+            // Reconstrói o heap, arraumar as propriedades
             for(int i = heap->tamanho/2; i >= 0; i--)
                 heapParaBaixo(heap, i);
                 
