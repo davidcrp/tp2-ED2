@@ -1,0 +1,10 @@
+# Executáveis
+tp2-ED2/tp2
+ordena
+*.o
+*.out
+*.exe
+
+# Fitas e blocos gerados na execução
+tp2-ED2/blocos/
+*.bin
